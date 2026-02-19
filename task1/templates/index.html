@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Email Scraper</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+        th, td { border: 1px solid #ccc; padding: 8px; }
+        th { background: #f4f4f4; }
+        #status { font-weight: bold; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<h2>📧 Company Email Scraper</h2>
+
+<form id="form">
+    <input type="file" name="file" accept=".xlsx" required>
+    <button type="submit">Start Scraping</button>
+</form>
+
+<p id="status"></p>
+<div id="table"></div>
+<a id="download" href="/download" style="display:none;">
+    <button>Download Excel</button>
+</a>
+
+<script>
+const form = document.getElementById("form");
+const statusEl = document.getElementById("status");
+const tableEl = document.getElementById("table");
+const downloadBtn = document.getElementById("download");
+
+form.onsubmit = e => {
+    e.preventDefault();
+    const data = new FormData(form);
+
+    fetch("/upload", { method: "POST", body: data })
+        .then(() => poll());
+};
+
+function poll(){
+    fetch("/progress")
+        .then(r => r.json())
+        .then(d => {
+            statusEl.innerText = d.status;
+
+            if(d.done){
+                downloadBtn.style.display = "inline";
+                renderTable(d.results);
+            } else {
+                setTimeout(poll, 2000);
+            }
+        });
+}
+
+function renderTable(rows){
+    if(!rows.length) return;
+
+    let html = "<table><tr><th>URL</th><th>Emails</th></tr>";
+    rows.forEach(r => {
+        html += `<tr><td>${r.URL}</td><td>${r.Emails}</td></tr>`;
+    });
+    html += "</table>";
+
+    tableEl.innerHTML = html;
+}
+</script>
+
+</body>
+</html>
