@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NASA Astronomy Picture of the Day</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background:#0b0f19;
+            color:white;
+            text-align:center;
+            padding:40px;
+        }
+
+        .container{
+            max-width:900px;
+            margin:auto;
+        }
+
+        img{
+            max-width:100%;
+            border-radius:10px;
+            margin-top:20px;
+        }
+
+        iframe{
+            width:100%;
+            height:500px;
+            margin-top:20px;
+        }
+
+        .date-form{
+            margin-bottom:30px;
+        }
+
+        input, button{
+            padding:10px;
+            font-size:16px;
+            border-radius:6px;
+            border:none;
+        }
+
+        button{
+            background:#1e90ff;
+            color:white;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#0f6ad6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>NASA Astronomy Picture of the Day</h1>
+
+    <div class="date-form">
+        <form id="dateForm">
+            <input type="date" id="dateInput" required>
+            <button type="submit">Load</button>
+        </form>
+    </div>
+
+    <h2>{{ data.title }}</h2>
+    <p><b>Date:</b> {{ data.date }}</p>
+
+    {% if data.media_type == "image" %}
+        <img src="{{ data.url }}" alt="NASA Image">
+    {% elif data.media_type == "video" %}
+        <iframe src="{{ data.url }}" frameborder="0" allowfullscreen></iframe>
+    {% endif %}
+
+    <p style="margin-top:20px; line-height:1.6;">
+        {{ data.explanation }}
+    </p>
+
+</div>
+
+<script>
+document.getElementById("dateForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    const date = document.getElementById("dateInput").value;
+    window.location.href = "/" + date;
+});
+</script>
+
+</body>
+</html>
